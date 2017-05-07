@@ -1,0 +1,144 @@
+
+<div id="skufields-block">
+	{foreach $shop_skufields_plugin.fields as $item_id=>$fields}
+	<div class="skufields" data-item-id="{$item_id|escape}" style="display:none">
+		<div class="skufields-controls">
+			<a href="#" data-mode="sku" class="control-btn active">артикул</a>
+			<a href="#" data-mode="product" class="control-btn">товар</a>
+			<a href="#" data-mode="sku_order" class="control-btn">артикул (заказ)</a>
+			<a href="#" data-mode="product_order" class="control-btn">товар (заказ)</a>
+			<a href="#" class="save float-right" style="display:none;"><i class="icon16 disk"></i>сохранить</a>
+			<a href="#" class="edit float-right"><i class="icon16 edit"></i>редактировать</a>
+		</div>
+		{foreach $fields as $field}
+		<div class="field">
+			<div class="name">{$field.name|escape}</div>
+			{foreach $field.values as $mode=>$v}
+			<input type="hidden" name="shop_skufields_plugin[{$mode|escape}][order_id]" value="{$v.ids.order_id|escape}">
+			<input type="hidden" name="shop_skufields_plugin[{$mode|escape}][product_id]" value="{$v.ids.product_id|escape}">
+			<div class="value skufields-mode-{$mode|escape}"{if $mode != 'sku'} style="display:none;"{/if}>
+				<div data-skufield-type="{$field.type|escape}">{$v.value|escape}</div>
+				{if $field.type == 'string'}
+				<input type="text" name="shop_skufields_plugin[{$mode|escape}][values][{$v.ids.sku_id|escape}][{$field.id|escape}][value]" value="{$v.value|escape}" style="display:none;"/>
+				{elseif $field.type == 'text'}
+				<textarea name="shop_skufields_plugin[{$mode|escape}][values][{$v.ids.sku_id|escape}][{$field.id|escape}][value]" style="display:none;">{$v.value|escape}</textarea>
+				{/if}
+			</div>
+			{/foreach}
+		</div>
+		{/foreach}
+	</div>
+	{/foreach}
+</div>
+
+<script type="text/html" id="tmpl-skufield-tr">
+<tr class="skufields-tr">
+	<td colspan="4">
+		<div class="skufield-header">
+			<a href="#"><i class="icon10 darr"></i> дополнительная информация</a>
+		</div>
+	</td>
+</tr>
+</script>
+
+<style type="text/css">
+#s-order-items .skufields {
+margin: 0 0 20px;
+padding: 10px;
+}
+.skufields-controls a.control-btn {
+color: #000;
+display: inline-block;
+border-bottom: #000 dotted 1px;
+margin: 0 5px 3px 0;
+}
+
+.skufields-controls a.active {
+border: none;
+color: #FF982E;
+}
+
+.skufields-controls a:hover {
+color: #FF982E!important;
+border: none;
+}
+
+#s-order-items .skufields .field {
+    float: none;
+    min-height: 25px;
+}
+</style>
+
+<script type="text/javascript">
+$(function(){
+	var skufields_block = $('#skufields-block'),
+		s_order_items = $('#s-order-items');
+	$('.skufields',skufields_block).each(function(){
+		var item_id = $(this).data('item-id'),
+			e = $('tr[data-id="'+item_id+'"]',s_order_items);
+		e.after($('#tmpl-skufield-tr').html());
+		var td = e.next('.skufields-tr').find('td');
+		td.append($('<form/>'));
+		$('form',td).append($(this));
+	})
+	
+	s_order_items
+	.on('click','.skufields-controls .float-right',function(){
+		var skufields = $(this).closest('.skufields'),
+			input = $('input[type="text"], textarea',skufields),
+			div = $('.value > div',skufields);
+		if ( $(this).is('.edit') ){
+			div.hide();
+			input.show();
+			$(this).hide();
+			$('a.save',skufields).show();
+		}
+		if ( $(this).is('.save') ){
+			$('[data-skufield-type]',skufields).each(function(){
+				var o = {},
+					name = '',
+					v = '';
+				if ( $(this).data('skufield-type') == 'string' )
+					o = $(this).next('input');
+				else
+					o = $(this).next('textarea');
+				name = o.attr('name');
+				v = o.val();
+				$('[name="'+name+'"]').each(function(){
+					$(this).val(v);
+					$(this).prev('div').html($('<div>'+v+'</div>').text());
+				});
+			})
+			div.show();
+			input.hide();
+			$(this).hide();
+			$('a.edit',skufields).show();
+			$.post('?plugin=skufields&module=save',$(this).closest('form').serializeArray(),function(){
+				
+			});
+		}
+		return false;
+	})
+	.on('click','.skufields-controls .control-btn',function(){
+		var skufields = $(this).closest('.skufields'),
+			mode = $(this).data('mode');
+		$('.value',skufields).hide();
+		$('.skufields-mode-'+mode,skufields).show();
+		$('.control-btn',skufields).removeClass('active');
+		$(this).addClass('active');
+		return false;
+	})
+	.on('click','.skufield-header a',function(){
+		var p = $('.darr',this).size(),
+			skufields = $(this).closest('td').find('.skufields');
+		if ( p ){
+			skufields.show();
+			$('i',this).removeClass('darr').addClass('uarr');
+		}else{
+			skufields.hide();
+			$('i',this).removeClass('uarr').addClass('darr');
+		}
+		return false;
+	})
+})
+</script>

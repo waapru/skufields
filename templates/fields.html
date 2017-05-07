@@ -1,0 +1,23 @@
+{if !empty($skufields.fields)}
+<ul class="skufields-list">
+	{foreach $skufields.fields as $field}
+		{if is_array($skufields.id)}
+			{foreach $skufields.id as $id}
+				{if $field.values[$id]|default:0}
+				<li class="skufields-item skufields-item-sku_id-{$id}"{if !$id@first} style="display:none;"{/if}>
+					<span class="skufields-item-name">{$field.name}:</span>
+					<span class="skufields-item-value">{$field.values[$id]}</span>
+				</li>
+				{/if}
+			{/foreach}
+		{else}
+			{if $field.values[$skufields.id]|default:0}
+			<li class="skufields-item">
+				<span class="skufields-item-name">{$field.name}:</span>
+				<span class="skufields-item-value">{$field.values[$skufields.id]}</span>
+			</li>
+			{/if}
+		{/if}
+	{/foreach}
+</ul>
+{/if}

@@ -1,0 +1,102 @@
+h1 a {
+font-size: 14px;
+float: right;
+font-weight: normal;
+line-height: 24px;
+display:inline-block;
+margin: 0 10px;
+}
+
+.value input[type="checkbox"] {
+position: relative;
+top: 4px;
+}
+
+.desc-btn {
+background: #FFD963;
+padding: 10px 20px;
+display: inline-block;
+border-left: none;
+cursor: pointer;
+color: black;
+}
+
+.desc-btn:hover {
+color: #000!important;
+background-color: #FFD147;
+}
+
+.desc-btn i {
+margin-right: 5px;
+}
+
+.desc {
+padding: 10px;
+border-left: #ECECEC solid 1px;
+background-color: #FBF7F1;
+}
+
+#desc-block p {
+margin-bottom: 5px;
+font: 13px/18px Arial;
+}
+
+.block-frontend-design {
+background: #FBFBFB;
+margin: 10px -20px;
+padding-left: 20px;
+border: #ECECEC solid 1px;
+border-left: none;
+}
+
+.block-frontend-design a {
+display: inline-block;
+padding: 5px 15px;
+background: white;
+border: #ECECEC solid 1px;
+margin-bottom: 5px;
+}
+
+.block-frontend-design h4 i{
+position: relative;
+top: 4px;
+margin-right: 8px;
+}
+
+.button:focus {
+outline:none;
+}
+
+.ibutton-container {
+margin-top: 5px;
+}
+
+#desc-block {
+margin-bottom:20px;
+}
+
+#plugins-settings-form {
+min-width:500px;
+}
+
+#skufields-new-field{
+display: block;
+margin-top: 20px;
+}
+.skufields-list-item .delete {
+float:right;
+}
+.skufields-list-item .delete i {
+float:left;
+}
+.skufields-list-item {
+border-bottom: silver solid 1px;
+padding-bottom: 10px;
+}
+input[type="checkbox"] {
+margin-top: 5px;
+}
+.desc-block {
+padding:10px;
+background:whitesmoke;
+}

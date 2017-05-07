@@ -1,0 +1,193 @@
+<script src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
+<link rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css" type="text/css"/>
+
+<script src="{$wa_url}wa-apps/shop/plugins/skufields/js/plugin.js?{$v}"></script>
+<link rel="stylesheet" href="{$wa_url}wa-apps/shop/plugins/skufields/css/plugin.css?{$v}">
+
+<h1>
+	Настройка плагина
+	<a href="mailto:waapru@gmail.com" title="waapru@gmail.com"><i class="icon16 status-green"></i>Поддержка</a>
+</h1>
+
+{if $add_field}
+<p class="skufields-w">Таблицы плагина в базе данных не преобразованы. Перезагрузите данный раздел.</p>
+{/if}
+
+<div class="skufields-plugin-settins">
+	<div id="desc-block">
+		<p>Хранение информации о модификации товара (артикуле товара) в приложении Магазин ограничено служебными полями и характеристиками определенного типа. Однако часто возникает потребность в хранении дополнительной служебной информации для модификаций товара, в частности при работе с заказами. Плагин "Поля артикула" расширяет стандартный функционал хранения информации о модификации товара и дополняет функционалом хранения служебной информации о модификации товара для конкретного заказа.</p>
+		<p>Плагин позволяет создавать дополнительные поля информации модификации товара. Для удобства сделана возможность хранения значений дополнительных полей информации для товара в целом, без учета модификаций. Также возможно хранение значения дополнительного поля модификации товара для конкретного заказа.</p> 
+		<p>Создаваемые поля информации могут быть двух типов: строковые для хранения небольшой порции информации (до 255 символов) и текстовые для более объемных записей.</p>
+		<p>Значения полей информации для конкретной модификации товара редактируются в редакторе товара в области редактирования модификации товара. Значения полей информации для товара редактируются в редакторе товара на вкладке "Основные данные". В разделе списка товаров возможно массовое редактирование значений полей. При массовом редактировании отмечаются необходимые товары в списке товаров и при нажатии на ссылку "Редактировать доп. поля артикула" в правом сайдбаре выводится модальное окно редактирования значений дополнительных полей информации выбранных товаров. В данном модальном окне также возможен поиск модификаций товаров по значению полей, а также поиск значений полей по артикулу или по именованию товара.</p>
+		<p>Редактировать значения полей модификаций можно и в разделе заказа. Ниже каждой модификации товара в заказе отображается блок с полями информации. Для редактирования нажмите "Редактировать", выберите нужную вкладку (артикул, товар, артикул (заказ), товар (заказ)). На вкладке "артикул" выводятся и редактируются поля конкретной модификации товара. На вкладке "товар" выводятся и редактируются поля товара. На вкладке "товар (заказ)" выводятся и редактируются поля товара для данного заказа. На вкладке "артикул (заказ)" выводятся и редактируются поля модификации товара для данного заказа.</p>
+		<p>В плагине реализована возможность импорта значений дополнительных полей модификаций товара и дополнительных полей товара с помощью стандартного csv-импорта. Заметим, однако, что импорт значений дополнительных полей для конкретных заказов не производится.</p>
+		<p>В разделе настройки плагина возможно управление видимостью полей в разных разделах сайта. Доступно 4 значения видимости: скрыть везде, выводить только в заказах, выводить только на витрине, выводить везде. В заказах поля выводятся для каждого товара. Для удобства управления значениями полей редактирование значений полей также доступно в заказе.</p>
+		{literal}
+		<p>Поля артикула можно вывести на витрине магазина с помощью хелпера <br>
+		<b>{shopSkufieldsShop::display($sku_id,$field_ids)}</b>,<br>
+		где $sku_id - идентификатор артикула, $field_ids - значение или массив значений идентификатора поля артикула, которое отображается в колонке ID ниже.
+		</p>
+		<p>Примеры:</p>
+		<p>1. Требуется вывести все отображаемые поля на странице товара:<br>
+		<b>{shopSkufieldsPlugin::display($product.sku_id)}</b>
+		</p>
+		<p>2. Требуется вывести одно отображаемое поле с ID 3 на странице товара:<br>
+		<b>{shopSkufieldsPlugin::display($product.sku_id,3)}</b>
+		</p>
+		<p>3. Требуется вывести поля с ID 3 и с ID 5 на странице товара:<br>
+		<b>{shopSkufieldsPlugin::display($product.sku_id,[3,5])}</b>
+		</p>
+		<p>Также с помощью этого хелпера можно вывести и поля товара<br>
+		<b>{shopSkufieldsShop::display($product_id,$field_ids,true)}</b>,<br>
+		где $product_id - идентификатор товара, $field_ids - значение или массив значений идентификатора поля артикула, которое отображается в колонке ID ниже, третьим параметром нужно указать true.
+		</p>
+		<p>Примеры:</p>
+		<p>1. Требуется вывести все отображаемые поля товара на странице товара:<br>
+		<b>{shopSkufieldsPlugin::display($product.id,0,true)}</b>
+		</p>
+		<p>2. Требуется вывести одно отображаемое поле товара с ID 3 на странице товара:<br>
+		<b>{shopSkufieldsPlugin::display($product.id,3,true)}</b>
+		</p>
+		<p>3. Требуется вывести поля товара с ID 3 и с ID 5 на странице товара:<br>
+		<b>{shopSkufieldsPlugin::display($product.id,[3,5],true)}</b>
+		</p>
+		{/literal}
+	</div>
+	
+	<div class="block block-frontend-design">
+		<h4>
+			<i class="icon16 palette"></i>Дизайн плагина на витрине для темы 
+			<select name="theme" id="select-frontend-design-theme">
+				<option value="_">Для всех тем</option>
+				{foreach $themes as $theme}
+				<option value="{$theme}">{$theme}</option>
+				{/foreach}
+				<option value="_default_">- исходный файл -</option>
+			</select>
+		</h4>
+		<a href="#" class="inline-link" data-mode="css" data-name="css">css-стили</a>
+		<a href="#" class="inline-link" data-mode="javascript" data-name="js">js-скрипты</a>
+		<a href="#" class="inline-link" data-mode="smarty" data-name="fields">блок</a>
+		<div id="frontend-design-dialog" style="display:none;">
+			<textarea style="display:none;"></textarea>
+			{$wa->csrf()}
+		</div>
+		<div>
+			<span class="hint">По умолчанию дизайн плагина на витрине один и тот же для всех витрин. Если требуется настоить индивидуальный дизайн для каждой витрины, выберите тему в выпадающем списке, кликните на нужный блок и внесите необходимые правки.</span>
+		</div>
+	</div>
+
+	<form action="?module=plugins&id=skufields&action=save" method="post" id="plugins-settings-form">
+		{$wa->csrf()}
+		<div class="field-group">
+			{$settings.standart}
+		</div>
+		
+		<table class="zebra full-width" id="skufields-table"{if !$settings.fields|default:0} style="display:none;"{/if}>
+		<thead>
+			<tr class="header">
+				<th class="min-width">&nbsp;</th>
+				<th>ID</th>
+				<th>Имя</th>
+				<th>Тип</th>
+				<th>Видимость</th>
+				{*<th>Экспорт</th>*}
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			{if $settings.fields|default:0}
+			{foreach $settings.fields as $k=>$f}
+			<tr data-k="{$k}">
+				<td class="min-width">
+					<i class="icon16 sort"></i>
+					<input type="hidden" name="shop_skufields[fields][{$k}][sort]" value="{$f.sort}" class="item-sort">
+				</td>
+				<td>{$k}</td>
+				<td>
+					<input type="text" name="shop_skufields[fields][{$k}][name]" value="{$f.name}" class="long">
+				</td>
+				<td>
+					{if $f.type == 'string'}
+					<select name="shop_skufields[fields][{$k}][type]">
+						<option value="string">Строковый</option>
+						<option value="text">Текстовый</option>
+					</select>
+					{/if}
+					{if $f.type == 'text'}
+					<input name="shop_skufields[fields][{$k}][type]" value="text" type="hidden">
+					Текстовый
+					{/if}
+				</td>
+				<td>
+					<select name="shop_skufields[fields][{$k}][visible]">
+						<option value="none"{if $f.visible == 'none'} selected{/if}>Скрыть</option>
+						<option value="frontend_only"{if $f.visible == 'frontend_only'} selected{/if}>Только на витрине</option>
+						<option value="order_only"{if $f.visible == 'order_only'} selected{/if}>Только в заказе</option>
+						<option value="everywhere"{if $f.visible == 'everywhere'} selected{/if}>Везде</option>
+					</select>
+				</td>
+				{*<td>
+					<select name="shop_skufields[fields][{$k}][export]">
+						<option value="0"{if $f.export == 0} selected{/if}>нет</option>
+						<option value="1"{if $f.export == 1} selected{/if}>да</option>
+					</select>
+				</td>*}
+				<td>
+					<a href="#" class="delete inline-link"><i class="icon16 delete"></i></a>
+				</td>
+			</tr>
+			{/foreach}
+			{/if}
+		</tbody>
+		</table>
+		
+		<a href="#" id="skufields-new-field"><i class="icon16 add"></i>новое поле</a>
+		<hr>
+			<input type="submit" class="button green" value="Сохранить" id="plugin-submit-btn" data-plugin-id="skufields">
+			<span id="plugins-settings-form-status" style="display:none">
+				<i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
+			</span>
+	</form>
+</div>
+
+<script type="text/html" id="skufields-table-item">
+<tr data-k="#k#">
+	<td class="min-width">
+		<i class="icon16 sort"></i>
+		<input type="hidden" name="shop_skufields[fields][#k#][sort]" value="#s#" class="item-sort">
+	</td>
+	<td>#k#</td>
+	<td>
+		<input type="text" name="shop_skufields[fields][#k#][name]" value="" class="long">
+	</td>
+	<td>
+		<select name="shop_skufields[fields][#k#][type]">
+			<option value="string">Строковый</option>
+			<option value="text">Текстовый</option>
+		</select>
+	</td>
+	<td>
+		<select name="shop_skufields[fields][#k#][visible]">
+			<option value="none">Скрыть</option>
+			<option value="order_only">Только на витрине</option>
+			<option value="frontend_only">Только в заказе</option>
+			<option value="everywhere">Везде</option>
+		</select>
+	</td>
+	{*<td>
+		<select name="shop_skufields[fields][{$k}][export]">
+			<option value="0">нет</option>
+			<option value="1">да</option>
+		</select>
+	</td>*}
+	<td>
+		<a href="#" class="delete inline-link"><i class="icon16 delete"></i></a>
+	</td>
+</tr>
+</script>
+
+<script type="text/javascript">
+var wa_url = '{$wa_url}';
+$.shop.skufieldsPlugin.init();
+</script>

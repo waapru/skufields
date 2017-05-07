@@ -1,0 +1,245 @@
+<div id="skufields-list-dialog" style="display:none">
+	{$wa->csrf()}
+	<div id="search-wr">
+			<input type="text" name="search" id="skufields-search">
+			<a href="?plugin=skufields&module=search" id="skufields-search-btn">ПОИСК</a>
+			<br>
+			<input type="checkbox" name="fields" class="by" id="skufields-fields-search"> по полям
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="product" class="by" id="skufields-product-search"> по именованию товара
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="checkbox" name="articul" class="by" id="skufields-articul-search"> по артикулу
+			<div id="choose-fields-wr">
+				{foreach $fields as $field}
+				<input type="checkbox" name="field[]" value="{$field.id}"> {$field.name}<br>
+				{/foreach}
+			</div>
+	</div>
+	<div id="skufields-list"></div>
+	<span id="skufields-list-msg"></span>
+</div>
+<li>
+	<a href="#" id="skufields-list-dialog-btn" class="inline-link"><i class="icon16 edit"></i>Редактировать доп. поля артикула</a>
+</li>
+
+<script type="text/html" id="skufields-list-item">
+<div class="skufields-list-item">
+	<div class="skufields-list-product"></div>
+	<div class="skufields-list-skus"></div>
+</div>
+</script>
+
+<script type="text/javascript">
+$(function(){
+	var list = $('#skufields-list'),
+		csrf = '{$wa->csrf()}';
+	
+	$('#skufields-list-dialog-btn').click(function(){
+		$('#skufields-list-dialog').waDialog({
+			title: 'Редактирование полей актикула',
+			buttons: '<input type="submit" value="Сохранить" class="button green" /> или <a href="#" class="cancel">отмена</a>',
+			onLoad: function(){
+				var products = $.product_list.getSelectedProducts(true),
+					m = $('#skufields-list-msg');
+				if (products.count){
+				//	m.text('Отметьте товары');
+				//else{
+					m.text('');
+					loadFields(products);
+				}
+			},
+			onSubmit: function (d) {
+				d.find(':submit').after('<i class="icon16 loading"></i>');
+				$.post('?plugin=skufields&module=save',d.find('form').serializeArray(),function(){
+					d.find('.loading').remove()
+				});
+				return false;
+			}
+		});
+		return false;
+	})
+	
+	function loadFields(products){
+		list.html('').append('<i class="icon16 loading"></i>');
+		$.post('?plugin=skufields&module=load',{ data:products.serialized },function(response){
+			makeList(response);
+		},'json')
+	}
+	
+	function makeList(response){
+		if ( response.data.products != typeof 'undefined' ){
+			var p = response.data.products,
+				html = $('#skufields-list-item').html();
+			for ( var product_id in p ){
+				var item = makeItem(html,product_id,p[product_id].name);
+				for ( var sku_id in p[product_id]['skus'] ){
+					var name = p[product_id]['skus'][sku_id].sku;
+					if ( p[product_id]['skus'][sku_id].name != '' )
+						name += ' ('+p[product_id]['skus'][sku_id].name+')';
+					item.find('.skufields-list-skus').append(makeItemSku(sku_id,name));
+				}
+				list.append(item);
+			}
+			loadSkufieldsValues();
+		}
+		list.find('.loading').remove()
+	}
+	
+	// product_id
+	// product
+	function makeItem(html,id,name){
+		var item = $(html).data('product-id',id);
+		item.find('.skufields-list-product').text(name);
+		return item;
+	}
+	
+	function makeItemSku(sku_id,name){
+		name = ( name ) ? name : 'Артикул №'+sku_id;
+		return $('<div />').addClass('skufields-list-sku').data('sku-id',sku_id).attr('sku_id',sku_id).html('<span class="name">'+name+'</span><span class="values"> <i class="icon10 rarr"></i> </span>');
+	}
+	
+	
+	function loadSkufieldsValues(){
+		var ids = [];
+		$('.skufields-list-sku').each(function(i){
+			ids[i] = $(this).data('sku-id');
+		})
+		$.post('?plugin=skufields&action=list',{ ids:ids },function(response){
+			if ( response.data.length > 0 )
+				for (var i=0;i<response.data.length;i++){
+					if ( response.data[i].values )
+						for (var sku_id in response.data[i].values){
+							$('[sku_id="'+sku_id+'"] .values').append(response.data[i].name+': '+response.data[i].values[sku_id]+'; ');
+						}
+				}
+		},'json')
+	}
+	
+	
+	list.on('click','.skufields-list-sku > span',function(){
+		var self = $(this).closest('.skufields-list-sku'),
+			sku_id = self.data('sku-id');
+		if ( !self.is('.active') ){
+			self.append('<i class="icon16 loading"></i>');
+			$.post('?plugin=skufields&module=fields',{ sku_id:sku_id },function(response){
+				if ( typeof response.data == 'object' )
+					self.addClass('active').append(makeSkuForm(sku_id,response.data));
+				self.find('.loading').remove();
+			},'json');
+		}
+		return false;
+	})
+	
+	function makeSkuForm(sku_id,fields){
+		var f = $('<div />');
+		f.append(csrf);
+		f.append('<input type="hidden" name="sku_id" value="'+sku_id+'">');
+		for ( var i in fields ){
+			f.append($('<div />').addClass('field'));
+			var fld = f.find('.field').last();
+			fld.append($('<div />').addClass('name').text(fields[i].name));
+			fld.append($('<div />').addClass('value'));
+			var v = fld.find('.value'),
+				name = 'values['+sku_id+']['+fields[i].id+']';
+			fld.append('<input type="hidden" name="'+name+'[type]" value="'+fields[i].type+'">');
+			var val = ( typeof fields[i].values[sku_id] != 'undefined' ) ? fields[i].values[sku_id] : '';
+			val = val.replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+			if ( fields[i].type == 'text' )
+				v.append('<textarea name="'+name+'[value]">'+val+'</textarea>');
+			if ( fields[i].type == 'string' )
+				v.append($('<input />').attr('name',name+'[value]').attr('value',val));
+		}
+		return f;
+	}
+	
+	$('#skufields-search-btn').click(function(){
+		var url = $(this).attr('href');
+		if ( $('#skufields-list .loading').size() == 0 ){
+			list.html('').append('<i class="icon16 loading"></i>');
+			$.post(url,$('#search-wr input').serializeArray(),function(response){
+				makeList(response)
+			},'json');
+		}
+		return false;
+	})
+	
+	$('#search-wr').on('click','[type="checkbox"]',function(){
+		var w = $('#search-wr');
+		if ( $(this).is('.by') && $(this).is(':checked') )
+			$('.by',w).not($(this)).removeAttr('checked');
+		if ( $('.by:checked').size() == 0 )
+			$('#skufields-fields-search').attr('checked','checked');
+		if ( $('#skufields-fields-search').is(':checked') )
+			$('#choose-fields-wr').show();
+		else
+			$('#choose-fields-wr').hide();
+	})
+})
+</script>
+
+<style>
+#skufields-list-dialog-btn {
+
+}
+.skufields-list-item {
+padding-bottom: 10px;
+}
+.skufields-list-product {
+font-weight: bold;
+padding: 3px;
+}
+.skufields-list-skus {
+padding:0 0 0 10px;
+}
+.skufields-list-sku {
+cursor:pointer;
+padding:0 0 3px;
+}
+.skufields-list-sku.active {
+padding: 10px;
+border: #EEE solid 1px;
+margin:5px 0;
+}
+.skufields-list-sku.active > span.name {
+font-weight:bold;
+display: inline-block;
+padding: 5px;
+margin-bottom: 5px;
+}
+.skufields-list-sku > span.values {
+color: #658953;
+}
+.skufields-list-sku.active > span.values {
+display:none;
+}
+#search-wr {
+padding: 10px;
+background: #FAFAFA;
+margin-bottom:10px;
+}
+#skufields-search {
+width: 85%;
+}
+#skufields-search-btn{
+display: inline-block;
+background: silver;
+height: 12px;
+padding: 5px;
+color: #000;
+text-decoration: none;
+}
+#skufields-search-btn:hover{
+color:#000;
+}
+#search-wr input[type="checkbox"]{
+position: relative;
+top: 3px;
+}
+#choose-fields-wr{
+padding: 5px 0 5px;
+display:none;
+}
+.skufields-list-skus .rarr {
+    margin-top: 3px;
+}
+</style>

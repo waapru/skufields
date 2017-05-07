@@ -1,0 +1,23 @@
+<div class="field-group" id="shop-skufields-plugin-product" style="display:none;">
+	{foreach $shop_skufields_plugin.fields as $f}
+	<div class="field">
+		<div class="name">{$f.name|escape}</div>
+		<div class="value">
+			{if $f.type == 'string'}
+			<input type="text" name="shop_skufields_plugin[0][{$f.id|escape}][value]" value="{$f.values|escape}" class="long">
+			{elseif $f.type == 'text'}
+			<textarea name="shop_skufields_plugin[0][{$f.id|escape}][value]">{$f.values|escape}</textarea>
+			{/if}
+			<input type="hidden" name="shop_skufields_plugin[0][{$f.id|escape}][type]" value="{$f.type|escape}">
+		</div>
+	</div>
+	{/foreach}
+</div>
+
+<script type="text/javascript">
+$(function(){
+	var e = $('#shop-skufields-plugin-product');
+	e.insertBefore($('#s-sku-type-field-group'));
+	e.show();
+})
+</script>
