@@ -95,7 +95,7 @@ $(function(){
 	
 	function makeItemSku(sku_id,name){
 		name = ( name ) ? name : 'Артикул №'+sku_id;
-		return $('<div />').addClass('skufields-list-sku').data('sku-id',sku_id).attr('sku_id',sku_id).html('<span class="name">'+name+'</span><span class="values"> <i class="icon10 rarr"></i> </span>');
+		return $('<div />').addClass('skufields-list-sku').data('sku-id',sku_id).attr('sku_id',sku_id).html('<span class="name">'+name+'</span><span class="values"> <i class="icon16 rarr"></i> </span>');
 	}
 	
 	
@@ -214,22 +214,25 @@ display:none;
 }
 #search-wr {
 padding: 10px;
-background: #FAFAFA;
+background: #e8e8e8;
 margin-bottom:10px;
 }
 #skufields-search {
 width: 85%;
 }
-#skufields-search-btn{
-display: inline-block;
-background: silver;
-height: 12px;
-padding: 5px;
-color: #000;
-text-decoration: none;
+#skufields-search-btn {
+	display: inline-block;
+	background: silver;
+	height: 12px;
+	padding: 5px;
+	color: #000;
+	text-decoration: none;
+	margin: 0;
+	position: relative;
+	top: 1px;
 }
-#skufields-search-btn:hover{
-color:#000;
+#skufields-search-btn:hover {
+	color: #4e4e4e!important;
 }
 #search-wr input[type="checkbox"]{
 position: relative;
@@ -241,5 +244,17 @@ display:none;
 }
 .skufields-list-skus .rarr {
     margin-top: 3px;
+}
+#skufields-list-dialog a.cancel {
+	display: inline-block!important;
+}
+.skufields-list-sku .name {
+	margin-right: 17px;
+}
+#skufields-list-dialog .dialog-window {
+	top:5%;
+	bottom:5%;
+	left:5%;
+	right:5%;
 }
 </style>
