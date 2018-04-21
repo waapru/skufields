@@ -15,6 +15,7 @@ return array(
 		'backend_order' => 'backendOrder',
 		'backend_products' => 'backendProducts',
 		'product_custom_fields' => 'productCustomFields',
+        'frontend_head' => 'frontendHead',
 	),
 );
 //EOF

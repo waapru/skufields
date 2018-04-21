@@ -125,6 +125,19 @@ class shopSkufieldsPlugin extends shopPlugin
 		
 		return empty($product) ? false : compact('product','sku');
 	}
+
+    /* event: frontend_head */
+    public function frontendHead()
+    {
+        $html = '';
+        if ( $this->getSettings('on') )
+        {
+            $f = new shopSkufieldsPluginFiles;
+            $f->addCss('css');
+            $f->addJs('js');
+        }
+        return $html;
+    }
 	
 	
 	/* helper */
@@ -154,8 +167,6 @@ class shopSkufieldsPlugin extends shopPlugin
 			$view->assign('skufields',compact('fields','id'));
 			
 			$f = new shopSkufieldsPluginFiles;
-			$f->addCss('css');
-			$f->addJs('js');
 			$html = $view->fetch('string:'.$f->getFileContent('fields'));
 		}
 		return $html;
