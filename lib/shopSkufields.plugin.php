@@ -61,8 +61,8 @@ class shopSkufieldsPlugin extends shopPlugin
 			if ( isset($v['skufields_plugin']) )
 			{
 				$values[$sku_id] = array();
-				foreach ( $v['skufields_plugin'] as $skufield_id=>$v )
-					$values[$sku_id][$skufield_id] = array('value'=>$v);
+				foreach ( $v['skufields_plugin'] as $skufield_id=>$w )
+					$values[$sku_id][$skufield_id] = array('value'=>$w);
 			}
 		if ( !empty($values) )
 			$this->save($values);
