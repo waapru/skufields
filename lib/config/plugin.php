@@ -4,7 +4,7 @@ return array(
 	'name' => 'Поля артикула',
 	'description' => '',
 	'vendor' => '929600',
-	'version' => '1.1.503',
+	'version' => '1.2',
 	'img' => 'img/skufields.png',
 	'shop_settings' => true,
 	'frontend' => true,
