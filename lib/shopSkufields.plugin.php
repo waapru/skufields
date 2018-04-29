@@ -141,7 +141,7 @@ class shopSkufieldsPlugin extends shopPlugin
 	
 	
 	/* helper */
-	static public function display($id,$field_ids=0,$product=false)
+	static public function display($id, $field_ids = 0, $product = false, $type = 1)
 	{
 		$html = '';
 		$plugin = wa()->getPlugin('skufields');
@@ -164,7 +164,7 @@ class shopSkufieldsPlugin extends shopPlugin
 						unset($fields[$k]);
 
 			$view = wa()->getView();
-			$view->assign('skufields',compact('fields','id'));
+			$view->assign('skufields',compact('fields','id','type'));
 			
 			$f = new shopSkufieldsPluginFiles;
 			$html = $view->fetch('string:'.$f->getFileContent('fields'));

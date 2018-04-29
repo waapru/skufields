@@ -1,4 +1,4 @@
-{if !empty($skufields.fields)}
+{if !empty($skufields.fields) && $skufields.type == 1}
 <ul class="skufields-list">
 	{foreach $skufields.fields as $field}
 		{if is_array($skufields.id)}
